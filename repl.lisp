@@ -26,6 +26,7 @@
 (defvar *hist-file*    "~/.sbcli_history")
 (defvar *last-result*  nil)
 (defvar *hist*         (list))
+(defvar *pygmentize*   nil)
 (declaim (special *special*))
 
 (defun read-hist-file ()
@@ -184,7 +185,26 @@
   (declare (ignore start) (ignore end))
   (select-completions text (get-all-symbols)))
 
+(defun maybe-highlight (str)
+  (if *pygmentize*
+    (with-input-from-string (s str)
+      (let ((proc (sb-ext:run-program "/usr/local/bin/pygmentize"
+                                      (list "-s" "-l" "lisp")
+                                      :input s
+                                      :output :stream)))
+         (read-line (sb-ext:process-output proc) nil "")))
+    str))
+
+(defun syntax-hl ()
+  (rl:redisplay)
+  (let ((res (maybe-highlight rl:*line-buffer*)))
+    (format t "~c[2K~c~a~a~c[~aD" #\esc #\return rl:*display-prompt* res #\esc (- rl:+end+ rl:*point*))
+    (when (= rl:+end+ rl:*point*)
+      (format t "~c[1C" #\esc))
+    (finish-output)))
+
 (rl:register-function :complete #'custom-complete)
+(rl:register-function :redisplay #'syntax-hl)
 
 ;; -1 means take the string as one arg
 (defvar *special*
