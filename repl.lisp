@@ -204,6 +204,7 @@
     (finish-output)))
 
 (rl:register-function :complete #'custom-complete)
+(rl:register-function :redisplay #'syntax-hl)
 
 ;; -1 means take the string as one arg
 (defvar *special*

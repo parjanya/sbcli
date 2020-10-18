@@ -83,6 +83,10 @@ For reference, here is a complete list of the variables we expose:
 ; while nothing prevents you from writing to them, i advise against it
 *last-result*  ; => nil
 *hist*         ; => ()
+
+; you can optionally set a path to pygmentize to enable syntax-coloring
+; in the REPL
+*pygmentize*
 ```
 
 <hr/>
