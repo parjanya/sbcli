@@ -188,7 +188,7 @@
 (defun maybe-highlight (str)
   (if *pygmentize*
     (with-input-from-string (s str)
-      (let ((proc (sb-ext:run-program "/usr/local/bin/pygmentize"
+      (let ((proc (sb-ext:run-program *pygmentize*
                                       (list "-s" "-l" "lisp")
                                       :input s
                                       :output :stream)))
